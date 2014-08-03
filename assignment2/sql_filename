@@ -1,0 +1,33 @@
+(a) 
+SELECT *, count(*) FROM frequency WHERE docid="10398_txt_earn"
+
+(b) 
+SELECT sub.docid, sub.count, count(sub.*) FROM (SELECT * FROM frequency WHERE docid="10398_txt_earn" AND count=1) AS sub
+
+(c) 
+SELECT sub1.docid, sub1.count, count(sub1.*) FROM (SELECT * FROM frequency WHERE docid="10398_txt_earn" AND count=1) AS sub1 
+UNION 
+SELECT sub2.docid, sub2.count, count(sub2.*) FROM (SELECT * FROM frequency WHERE docid="925_txt_trade" AND count=1)
+
+(d) 
+SELECT count(sub.docid) FROM (SELECT DISTINCT docid FROM frequency WHERE term = 'paliament') AS sub
+
+(e) 
+SELECT sub.docid FROM (SELECT docid, count(term) AS count FROM frequency GROUP BY docid) AS sub WHERE sub.count > 300
+
+(f)
+SELECT DISTINCT sub.docid FROM (SELECT DISTINCT docid FROM frequency WHERE term = "transactions") AS sub WHERE term = "world"
+
+(g)
+select A.row_num, B.col_num, sum(A.value * B.value) from A left outer join B where A.row_num = B.col_num and A.col_num = B.row_num group by A.row_num, B.col_num;
+
+(h)
+select f1.docid, f2.docid, sum(f1.count*f2.count) from frequency f1 left outer join frequency f2 on f1.term = f2.term where f1.docid != f2.docid group by f1.docid;
+
+(i)
+CREATE VIEW new_frequency AS SELECT * FROM frequency UNION SELECT 'q' as docid, 'washington' as term, 1 as count UNION SELECT 'q' as docid, 'taxes' as term, 1 as count UNION SELECT 'q' as docid, 'treasury' as term, 1 as count;
+
+SELECT f1.docid, f2.docid, SUM(f1.count*f2.count) AS similarity FROM new_frequency f1 LEFT OUTER JOIN new_frequency f2 ON f1.term = f2.term WHERE f1.docid != f2.docid AND f2.docid = 'q' GROUP BY f1.docid ORDER BY similarity DESC;
+
+
+
